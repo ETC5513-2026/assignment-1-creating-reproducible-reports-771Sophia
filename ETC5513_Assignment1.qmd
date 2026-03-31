@@ -1,0 +1,37 @@
+---
+title: "ETC5513_Assignment1"
+author: "Sinping CHAN"
+format: html
+editor: visual
+
+format:
+  html:
+    theme: cosmo       
+    toc: true
+    code-fold: true      # Allows readers to toggle code visibility
+    embed-resources: true 
+  pdf:
+    documentclass: article
+    toc: true
+    number-sections: true
+    colorlinks: true
+
+execute:
+  echo: false         
+  warning: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+marketing_data = read.csv("data/35851937_Sin Chan.csv")
+
+head(marketing_data)
+names(marketing_data)
+
+
+```
+
+### Introduction
+
+>  In an increasingly competitive e-commerce landscape, quantifying the return on personalized marketing investments is essential for driving sustainable revenue growth. This research examines whether higher expenditure on advertisements, emails, and coupons during the previous quarter’s personalized campaign led to increased individual purchase amounts. By analyzing these relationships at the customer level, the study evaluates the effectiveness of variable marketing spend across different channels. Ultimately, the research seeks to identify potential thresholds where additional marketing investment yields diminishing returns.
