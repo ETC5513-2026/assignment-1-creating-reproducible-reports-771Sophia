@@ -3,6 +3,24 @@ title: "appendix"
 author: "Sinping CHAN"
 format: html
 editor: visual
+
+
+format:
+  html:
+    theme: cosmo       
+    toc: true
+    code-fold: true      # Allows readers to toggle code visibility
+    embed-resources: true 
+  pdf:
+    documentclass: article
+    toc: true
+    number-sections: true
+    colorlinks: true
+
+execute:
+  echo: false         
+  warning: false
+  message: false
 ---
 
 ### R code for data cleaning
@@ -13,10 +31,10 @@ editor: visual
 
 ![](images/cleaning_code3.png)
 
-### Correct my tone and writing in Dataset Introduction section
+### Correct my tone and english writing in Dataset Introduction sectiongit code for pushing, and check whether my writing is alligned to my code
 
-![](images/螢幕擷取畫面 2026-03-31 213122.png)
+![](images/correct_eng1.png)
 
-![](images/2026-03-31 212946-01.png)
+![](images/correct_eng2.png)
 
-![](images/2026-03-31 212958.png)
+![](images/correct_eng3.png)
