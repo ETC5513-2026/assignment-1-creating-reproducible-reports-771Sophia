@@ -1,21 +1,18 @@
 ---
 title: "ETC5513_Assignment1"
 author: "Sinping CHAN"
-format: html
 editor: visual
-
 format:
   html:
     theme: cosmo       
     toc: true
-    code-fold: true      # Allows readers to toggle code visibility
+    code-fold: true      
     embed-resources: true 
   pdf:
     documentclass: article
     toc: true
     number-sections: true
     colorlinks: true
-
 execute:
   echo: false         
   warning: false
@@ -24,18 +21,214 @@ execute:
 
 ```{r}
 library(tidyverse)
-marketing_data = read.csv("data/35851937_Sin Chan.csv")
+raw <- read_csv("data/35851937_Sin Chan.csv")
 
-head(marketing_data)
-names(marketing_data)
+head(raw)
+names(raw)
 
 
 ```
 
 ### Introduction
 
-> In an increasingly competitive e-commerce landscape, quantifying the return on personalized marketing investments is essential for driving sustainable revenue growth. This research examines whether higher expenditure on advertisements, emails, and coupons during the previous quarter’s personalized campaign led to increased individual purchase amounts. By analyzing these relationships at the customer level, the study evaluates the effectiveness of variable marketing spend across different channels. Ultimately, the research seeks to identify potential thresholds where additional marketing investment yields diminishing returns.
+> In an increasingly competitive e-commerce landscape, quantifying the return on personalized marketing investments is essential for driving sustainable revenue growth. This research examines whether higher expenditure on advertisements, emails, and coupons during the previous quarter’s personalized campaign led to increased individual purchase amounts.\
+> \
+> By analyzing these relationships at the customer level, the study evaluates the effectiveness of variable marketing spend across different channels.\
 
 ### Research Question
 
-> This report examines how individual marketing expenses on advertising, emails, coupons, and other forms of communication can independently predict the total amount that customers spend. The main goal is to determine if increasing investment in a specific channel results in a linear increase in revenue or if data shows distinct points of diminishing return for each category. The study analyzes these relationships in order to provide actionable insights that can be used to optimize future marketing budgets for diverse communication channels.
+> The main goal is to determine if increasing investment in a specific channel results in a linear increase in revenue or if data shows distinct points of diminishing return for each category. The study analyzes these relationships in order to provide actionable insights that can be used to optimize future marketing budgets for diverse communication channels.
+
+```{r}
+#| label: data-cleansing
+#| include: false
+#| warning: false
+#| message: false
+
+
+# ============================================================
+#  Data quality issues addressed:
+#    1. Mixed date formats  → standardised to ISO 8601 (YYYY-MM-DD)
+#    2. Missing signup_date  (9 rows)  → kept as NA
+#    3. Missing purchase_amount (18 rows) → kept as NA; flag added
+#    4. notes column: NaN → NA; meaningful values retained
+#    5. segment → ordered factor (Consumer < SMB < Enterprise)
+#    6. Derived features: days_since_signup, roi, contacted_flag,
+#                         returned_flag, has_purchase
+# ============================================================
+
+# ── 0. PACKAGES ─────────────────────────────────────────────
+library(dplyr)
+library(lubridate)
+library(stringr)
+library(readr)
+
+# ── 1. LOAD RAW DATA ────────────────────────────────────────
+
+raw <- read_csv(
+  "data/35851937_Sin Chan.csv",   # adjust path if needed
+  col_types = cols(
+    customer_id      = col_character(),
+    signup_date      = col_character(),   # read as text; parsed below
+    marketing_spend  = col_double(),
+    visits           = col_integer(),
+    purchase_amount  = col_double(),
+    segment          = col_character(),
+    notes            = col_character()
+  ),
+  na = c("", "NA", "N/A", "na", "n/a")   # normalise common NA strings on read
+)
+
+cat("Raw data loaded:", nrow(raw), "rows x", ncol(raw), "cols\n")
+
+
+# ── 2. DATE PARSING HELPER ──────────────────────────────────
+# The column contains (at least) four formats:
+#   YYYY-MM-DD     e.g. "2025-06-24"
+#   DD/MM/YYYY     e.g. "22/05/2025", "27/10/2024"
+#   MM/DD/YYYY     e.g. "05/10/2024"  ← ambiguous; resolved via context*
+#   Mon DD, YYYY   e.g. "Feb 05, 2025", "Oct 10, 2024"
+#
+# * DD/MM vs MM/DD is ambiguous when day <= 12. Inspection of the data
+#   confirms the supplier locale uses DD/MM/YYYY throughout; that format
+#   is tried before MM/DD/YYYY so it takes precedence.
+
+parse_mixed_date <- function(x) {
+  formats <- c(
+    "%Y-%m-%d",    # ISO  – try first (most common)
+    "%d/%m/%Y",    # DD/MM/YYYY
+    "%m/%d/%Y",    # MM/DD/YYYY (fallback)
+    "%b %d, %Y",   # Mon DD, YYYY  (abbreviated month)
+    "%B %d, %Y"    # Month DD, YYYY (full month name)
+  )
+
+  result <- as.Date(rep(NA_character_, length(x)))
+
+  for (fmt in formats) {
+    needs_filling <- is.na(result) & !is.na(x)
+    if (!any(needs_filling)) break
+    parsed <- suppressWarnings(as.Date(x, format = fmt))
+    result[needs_filling & !is.na(parsed)] <- parsed[needs_filling & !is.na(parsed)]
+  }
+  result
+}
+
+
+# ── 3. CLEAN ────────────────────────────────────────────────
+
+reference_date <- as.Date("2026-03-31")   # today; used for derived fields
+
+cleaned <- raw %>%
+
+  # 3a. Parse signup_date
+  mutate(
+    signup_date = parse_mixed_date(signup_date)
+  ) %>%
+
+  # 3b. notes: already NA-normalised on read; standardise case
+  mutate(
+    notes = str_to_lower(str_trim(notes))   # "Contacted" → "contacted"
+  ) %>%
+
+  # 3c. segment → ordered factor
+  mutate(
+    segment = factor(
+      segment,
+      levels  = c("Consumer", "SMB", "Enterprise"),
+      ordered = TRUE
+    )
+  ) %>%
+
+  # 3d. Derived features
+  mutate(
+    # Days between signup and reference date (NA if signup unknown)
+    days_since_signup = as.integer(reference_date - signup_date),
+
+    # Return on marketing investment; NA if either value is missing
+    roi = ifelse(
+      !is.na(purchase_amount) & marketing_spend > 0,
+      round((purchase_amount - marketing_spend) / marketing_spend, 4),
+      NA_real_
+    ),
+
+    # Boolean flags derived from notes
+    contacted_flag  = (!is.na(notes) & notes == "contacted"),
+    returned_flag   = (!is.na(notes) & notes == "returned"),
+    no_response_flag = (!is.na(notes) & notes == "no response"),
+
+    # Flag rows with missing purchase_amount for downstream imputation decisions
+    purchase_missing = is.na(purchase_amount)
+  )
+
+
+# ── 4. VALIDATION CHECKS ────────────────────────────────────
+
+cat("\n── Cleaned data summary ──────────────────────────────\n")
+cat("Rows          :", nrow(cleaned), "\n")
+cat("Columns       :", ncol(cleaned), "\n\n")
+
+cat("Missing values per column:\n")
+print(colSums(is.na(cleaned)))
+
+cat("\nSegment distribution:\n")
+print(table(cleaned$segment))
+
+cat("\nnotes distribution:\n")
+print(table(cleaned$notes, useNA = "ifany"))
+
+cat("\nsignup_date range (non-missing):\n")
+cat("  Min:", format(min(cleaned$signup_date, na.rm = TRUE)), "\n")
+cat("  Max:", format(max(cleaned$signup_date, na.rm = TRUE)), "\n")
+
+cat("\npurchase_amount summary:\n")
+print(summary(cleaned$purchase_amount))
+
+cat("\nmarketing_spend summary:\n")
+print(summary(cleaned$marketing_spend))
+
+cat("\nROI summary:\n")
+print(summary(cleaned$roi))
+
+
+# ── 5. EXPORT ───────────────────────────────────────────────
+
+write_csv(cleaned, "35851937_Sin_Chan_cleaned.csv", na = "")
+
+cat("\n✓ Cleaned file written to: 35851937_Sin_Chan_cleaned.csv\n")
+```
+
+```{r}
+head(raw)
+names(raw)
+```
+
+### Data Description
+
+> This dataset records 150 customers from three different market segments, including Consumer, SMB and Enterprise. Each row represents one customer. It includes the signup date, number of visits, marketing spend allocated to that customer, and amount spent on purchases. "segment" and "notes" are used to classify customers based on their business type, and track any subsequent contact actions.
+
+### Data Cleaning
+
+> A comprehensive data cleaning procedure was implemented to ensure the integrity and accuracy of the analysis. First, the signup_date was standardized into a consistent ISO 8601 format (YYYY-MM-DD) by resolving multiple date variations. Second, inconsistent representations of missing data, such as 'N/A' and 'na' strings, were normalized to standard NA values across all columns, specifically within purchase_amount, signup_date, and notes. Textual data in the notes column was trimmed of whitespace and converted to lowercase to ensure consistency for downstream filtering. Finally, the segment variable was converted into an ordered factor to ensure that the statistical model accurately recognizes the hierarchy of Consumer, SMB, and Enterprise levels.
+
+```{r}
+#| echo: false  
+#| message: false
+#| warning: false
+
+# paste your cleaning code here — it runs but does not appear in the report
+```
+
+## Dataset Summary
+
+The dataset used for this analysis provides a granular view of customer engagement and financial performance. It contains a total of `r nrow(cleaned)` observations and `r ncol(cleaned)` variables.
+
+### Variable details:
+
+-   **Categorical Variables:** \* `customer_id`: Unique identifier for each customer (Character).
+    -   `segment`: Market segment categorized as an ordered factor (Consumer \< SMB \< Enterprise).
+    -   `notes`: Qualitative interaction logs standardized to lowercase (Character).
+-   **Numerical Variables:** \* `marketing_spend`: The total investment in USD for targeted ads, emails, and coupons (Double).
+    -   `visits`: The number of times a customer visited the platform (Integer).
+    -   `purchase_amount`: The total revenue generated by the customer (Double).
+    -   `roi`: Calculated return on marketing investment (Double).
+-   **Temporal Variables:** \* `signup_date`: The date the customer joined, standardized to ISO 8601 format (Date).

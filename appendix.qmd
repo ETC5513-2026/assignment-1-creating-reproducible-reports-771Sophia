@@ -1,0 +1,22 @@
+---
+title: "appendix"
+author: "Sinping CHAN"
+format: html
+editor: visual
+---
+
+### R code for data cleaning
+
+![](images/cleaning_code1.png)
+
+![](images/cleaning_code2.png)
+
+![](images/cleaning_code3.png)
+
+### Correct my tone and writing in Dataset Introduction section
+
+![](images/螢幕擷取畫面 2026-03-31 213122.png)
+
+![](images/2026-03-31 212946-01.png)
+
+![](images/2026-03-31 212958.png)
