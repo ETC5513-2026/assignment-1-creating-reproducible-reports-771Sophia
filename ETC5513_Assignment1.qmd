@@ -34,4 +34,8 @@ names(marketing_data)
 
 ### Introduction
 
->  In an increasingly competitive e-commerce landscape, quantifying the return on personalized marketing investments is essential for driving sustainable revenue growth. This research examines whether higher expenditure on advertisements, emails, and coupons during the previous quarter’s personalized campaign led to increased individual purchase amounts. By analyzing these relationships at the customer level, the study evaluates the effectiveness of variable marketing spend across different channels. Ultimately, the research seeks to identify potential thresholds where additional marketing investment yields diminishing returns.
+> In an increasingly competitive e-commerce landscape, quantifying the return on personalized marketing investments is essential for driving sustainable revenue growth. This research examines whether higher expenditure on advertisements, emails, and coupons during the previous quarter’s personalized campaign led to increased individual purchase amounts. By analyzing these relationships at the customer level, the study evaluates the effectiveness of variable marketing spend across different channels. Ultimately, the research seeks to identify potential thresholds where additional marketing investment yields diminishing returns.
+
+### Research Question
+
+> This report examines how individual marketing expenses on advertising, emails, coupons, and other forms of communication can independently predict the total amount that customers spend. The main goal is to determine if increasing investment in a specific channel results in a linear increase in revenue or if data shows distinct points of diminishing return for each category. The study analyzes these relationships in order to provide actionable insights that can be used to optimize future marketing budgets for diverse communication channels.
