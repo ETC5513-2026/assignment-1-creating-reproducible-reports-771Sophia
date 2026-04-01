@@ -20,6 +20,11 @@ execute:
 ---
 
 ```{r}
+#| label: quicklook
+#| include: false
+#| warning: false
+#| message: false
+
 library(tidyverse)
 raw <- read_csv("data/35851937_Sin Chan.csv")
 
@@ -198,6 +203,11 @@ cat("\n✓ Cleaned file written to: 35851937_Sin_Chan_cleaned.csv\n")
 ```
 
 ```{r}
+#| label: datacheck
+#| include: false
+#| warning: false
+#| message: false
+
 head(raw)
 names(raw)
 ```

@@ -23,7 +23,7 @@ execute:
   message: false
 ---
 
-### R code for data cleaning
+### R code for data cleaning 
 
 ![](images/cleaning_code1.png)
 
