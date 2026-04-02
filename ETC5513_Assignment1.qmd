@@ -34,22 +34,23 @@ names(raw)
 
 ```
 
-### Introduction
+## Introduction
 
 > In an increasingly competitive e-commerce landscape, quantifying the return on personalized marketing investments is essential for driving sustainable revenue growth. This research examines whether higher expenditure on advertisements, emails, and coupons during the previous quarter’s personalized campaign led to increased individual purchase amounts.\
 > \
 > By analyzing these relationships at the customer level, the study evaluates the effectiveness of variable marketing spend across different channels.\
 
-### Research Question
+## Research Question
 
 > The main goal is to determine if increasing investment in a specific channel results in a linear increase in revenue or if data shows distinct points of diminishing return for each category. The study analyzes these relationships in order to provide actionable insights that can be used to optimize future marketing budgets for diverse communication channels.
+
+## Dataset Introduction
 
 ```{r}
 #| label: data-cleansing
 #| include: false
 #| warning: false
 #| message: false
-
 
 # ============================================================
 #  Data quality issues addressed:
@@ -199,46 +200,76 @@ print(summary(cleaned$roi))
 
 write_csv(cleaned, "35851937_Sin_Chan_cleaned.csv", na = "")
 
-cat("\n✓ Cleaned file written to: 35851937_Sin_Chan_cleaned.csv\n")
 ```
-
-```{r}
-#| label: datacheck
-#| include: false
-#| warning: false
-#| message: false
-
-head(raw)
-names(raw)
-```
-
-### Data Description
-
-> This dataset records 150 customers from three different market segments, including Consumer, SMB and Enterprise. Each row represents one customer. It includes the signup date, number of visits, marketing spend allocated to that customer, and amount spent on purchases. "segment" and "notes" are used to classify customers based on their business type, and track any subsequent contact actions.
 
 ### Data Cleaning
 
-> A comprehensive data cleaning procedure was implemented to ensure the integrity and accuracy of the analysis. First, the signup_date was standardized into a consistent ISO 8601 format (YYYY-MM-DD) by resolving multiple date variations. Second, inconsistent representations of missing data, such as 'N/A' and 'na' strings, were normalized to standard NA values across all columns, specifically within purchase_amount, signup_date, and notes. Textual data in the notes column was trimmed of whitespace and converted to lowercase to ensure consistency for downstream filtering. Finally, the segment variable was converted into an ordered factor to ensure that the statistical model accurately recognizes the hierarchy of Consumer, SMB, and Enterprise levels.
+> To ensure the dataset was ready for reproducible analysis, a cleaning procedure was performed. First, the `signup_date` column was standardized into a consistent ISO 8601 format to resolve various date string discrepancies. Second, inconsistent missing value indicators (such as 'N/A' or 'na') were unified into standard R `NA` values across all columns, particularly for `purchase_amount` and `notes`. Textual entries in the `notes` column were trimmed of extra whitespace and converted to lowercase to maintain string consistency. Finally, the `segment` variable was reclassified as an ordered factor to correctly represent the hierarchy of business tiers, ensuring that the statistical summaries reflect the intended business logic.
+
+### Data Description
+
+> This dataset records the engagement of `r nrow(cleaned)` customers across 3 market segments (Consumer, SMB, and Enterprise) from September 2024 to February 2026. The data measures key performance metrics including individual marketing expenditures, total purchase amounts, and platform visit frequency. The processed dataset consists of `r ncol(cleaned)` variables, ranging from numerical financial figures (e.g., `marketing_spend`, `roi`) to categorical classifications and logical flags used for tracking customer behavior.
+>
+> The dataset includes the following 6 variable types:
+>
+> -   **Numeric**: `marketing_spend`, `purchase_amount`, and `roi`.
+>
+> -   **Integer**: `visits` and `days_since_signup`.
+>
+> -   **Ordered Factor**: `segment` (Consumer \< SMB \< Enterprise).
+>
+> -   **Date**: `signup_date`.
+>
+> -   **Character**: `customer_id` and `notes`.
+>
+> -   **Logical**: `contacted_flag`, `returned_flag`, `no_response_flag`, and `purchase_missing`
 
 ```{r}
-#| echo: false  
-#| message: false
+#| label: fig-spend-vs-purchase
+#| echo: false
 #| warning: false
 
-# paste your cleaning code here — it runs but does not appear in the report
+library(ggplot2)
+
+ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Figure 1: Marketing Spend vs Purchase Amount by Segment",
+    subtitle = "Analysis of correlation across different business tiers",
+    x = "Marketing Spend ($)",
+    y = "Purchase Amount ($)",
+    color = "Segment"
+  ) +
+  theme_minimal()
 ```
 
-## Dataset Summary
+```{r}
+#| label: tbl-segment-summary
+#| echo: false
+#| message: false
 
-The dataset used for this analysis provides a granular view of customer engagement and financial performance. It contains a total of `r nrow(cleaned)` observations and `r ncol(cleaned)` variables.
+library(dplyr)
+library(knitr)
 
-### Variable details:
+# 建立按 segment 分組的統計表
+segment_summary <- cleaned |>
+  group_by(segment) |>
+  summarise(
+    `Avg Spend` = mean(marketing_spend, na.rm = TRUE),
+    `Avg Purchase` = mean(purchase_amount, na.rm = TRUE),
+    `Total Visits` = sum(visits, na.rm = TRUE),
+    `Missing Rate (%)` = mean(purchase_missing) * 100
+  ) |>
+  mutate(across(where(is.numeric), ~round(., 2)))
 
--   **Categorical Variables:** \* `customer_id`: Unique identifier for each customer (Character).
-    -   `segment`: Market segment categorized as an ordered factor (Consumer \< SMB \< Enterprise).
-    -   `notes`: Qualitative interaction logs standardized to lowercase (Character).
--   **Numerical Variables:** \* `marketing_spend`: The total investment in USD for targeted ads, emails, and coupons (Double).
-    -   `visits`: The number of times a customer visited the platform (Integer).
-    -   `purchase_amount`: The total revenue generated by the customer (Double).
-    -   `roi`: Calculated return on marketing investment (Double).
--   **Temporal Variables:** \* `signup_date`: The date the customer joined, standardized to ISO 8601 format (Date).
+# 在 kable 函數內直接加入 caption
+kable(segment_summary, 
+      caption = "Table 1: Summary Statistics of Campaign Performance by Segment")
+```
+
+As detailed in @tbl-segment-summary, the average marketing spend and purchase behavior vary across 3 segments, with the Enterprise segment showing the highest average marketing spend at \$174.73, while the Consumer segment contributed the vast majority of platform traffic with 511 total visits Furthermore, @fig-spend-vs-purchase illustrates the linear relationship between spending and revenue, highlighting that the SMB segment achieves a steeper slope and potentially higher incremental ROI compared to others.
+
+------------------------------------------------------------------------
+
+The visualizations reveal a clear positive linear relationship between marketing expenditures and purchase amounts across all customer categories. While the Enterprise segment starts with a higher intercept, suggesting a baseline level of higher initial commitment, its slope is noticeably flatter compared to the Consumer and SMB groups. This flatter slope indicates potential diminishing marginal returns where additional spending yields less incremental revenue than in other segments. Furthermore, the data shows a distinct ceiling in maximum expenditure around \$270, which likely reflects a pre-defined campaign budget limit or a saturation point in the current promotional strategy.
