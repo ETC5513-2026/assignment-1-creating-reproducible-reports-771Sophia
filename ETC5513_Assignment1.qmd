@@ -42,7 +42,7 @@ names(raw)
 
 ## Research Question
 
-> The main goal is to determine if increasing investment in a specific channel results in a linear increase in revenue or if data shows distinct points of diminishing return for each category. The study analyzes these relationships in order to provide actionable insights that can be used to optimize future marketing budgets for diverse communication channels.
+> The main goal of this report is to determine if increasing investment in a specific channel results in a linear increase in revenue or if data shows distinct points of diminishing return for each category. The study analyzes these relationships in order to provide actionable insights that can be used to optimize future marketing budgets for diverse communication channels.
 
 ## Dataset Introduction
 
@@ -242,6 +242,7 @@ ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment)) 
     color = "Segment"
   ) +
   theme_minimal()
+
 ```
 
 ```{r}
@@ -268,8 +269,118 @@ kable(segment_summary,
       caption = "Table 1: Summary Statistics of Campaign Performance by Segment")
 ```
 
-As detailed in @tbl-segment-summary, the average marketing spend and purchase behavior vary across 3 segments, with the Enterprise segment showing the highest average marketing spend at \$174.73, while the Consumer segment contributed the vast majority of platform traffic with 511 total visits Furthermore, @fig-spend-vs-purchase illustrates the linear relationship between spending and revenue, highlighting that the SMB segment achieves a steeper slope and potentially higher incremental ROI compared to others.
+As detailed in @tbl-segment-summary, the average marketing spend and purchase behavior vary across 3 segments, with the Enterprise segment showing the highest average marketing spend at \$174.73, while the Consumer segment contributed the vast majority of platform traffic with 511 total visits.\
+Furthermore, @fig-spend-vs-purchase illustrates the linear relationship between spending and revenue.
 
 ------------------------------------------------------------------------
 
-The visualizations reveal a clear positive linear relationship between marketing expenditures and purchase amounts across all customer categories. While the Enterprise segment starts with a higher intercept, suggesting a baseline level of higher initial commitment, its slope is noticeably flatter compared to the Consumer and SMB groups. This flatter slope indicates potential diminishing marginal returns where additional spending yields less incremental revenue than in other segments. Furthermore, the data shows a distinct ceiling in maximum expenditure around \$270, which likely reflects a pre-defined campaign budget limit or a saturation point in the current promotional strategy.
+## Results
+
+```{r}
+# ── PACKAGES ────────────────────────────────────────────────
+library(dplyr)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+library(scales)
+
+# ══════════════════════════════════════════════════════════════
+# ROI SUMMARY TABLE
+# ══════════════════════════════════════════════════════════════
+
+#| label: tbl-roi-summary
+#| echo: false
+#| warning: false
+#| message: false
+
+roi_table <- cleaned %>%
+  filter(!is.na(roi)) %>%
+  group_by(segment) %>%
+  summarise(
+    Customers          = n(),
+    `Mean ROI (%)`     = paste0(round(mean(roi) * 100, 1), "%"),
+    `Median ROI (%)`   = paste0(round(median(roi) * 100, 1), "%"),
+    `Positive ROI (n)` = sum(roi > 0),
+    `Negative ROI (n)` = sum(roi < 0),
+    `% Negative ROI`   = paste0(round(mean(roi < 0) * 100, 1), "%"),
+    `Mean Spend ($)`   = paste0("$", round(mean(marketing_spend), 2)),
+    `Mean Purchase ($)` = paste0("$", round(mean(purchase_amount, na.rm = TRUE), 2)),
+    .groups = "drop"
+  ) %>%
+  arrange(segment)
+
+# Add total row
+total_row <- cleaned %>%
+  filter(!is.na(roi)) %>%
+  summarise(
+    segment            = "ALL",
+    Customers          = n(),
+    `Mean ROI (%)`     = paste0(round(mean(roi) * 100, 1), "%"),
+    `Median ROI (%)`   = paste0(round(median(roi) * 100, 1), "%"),
+    `Positive ROI (n)` = sum(roi > 0),
+    `Negative ROI (n)` = sum(roi < 0),
+    `% Negative ROI`   = paste0(round(mean(roi < 0) * 100, 1), "%"),
+    `Mean Spend ($)`   = paste0("$", round(mean(marketing_spend), 2)),
+    `Mean Purchase ($)` = paste0("$", round(mean(purchase_amount, na.rm = TRUE), 2))
+  )
+
+roi_summary <- bind_rows(roi_table, total_row)
+
+roi_summary %>%
+  kable(
+    caption  = "ROI Summary Statistics by Segment",
+    align    = c("l", rep("c", ncol(roi_summary) - 1)),
+    booktabs = TRUE
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"),
+    full_width        = FALSE,
+    position          = "left"
+  ) %>%
+  column_spec(1, bold = TRUE) %>%
+  column_spec(6, bold = TRUE,
+              color = ifelse(
+                as.numeric(gsub("%", "", roi_summary$`% Negative ROI`)) > 60,
+                "red", "black"
+              )) %>%
+  row_spec(nrow(roi_summary), bold = TRUE, background = "#f5f5f5")
+
+```
+
+```{r}
+#| label: fig-diminishing-returns
+#| fig-cap: "Non-linear smoothing (LOESS) identifying potential points of diminishing marginal returns in marketing spend."
+#| echo: false
+#| message: false
+#| warning: false
+
+library(ggplot2)
+
+ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment, fill = segment)) +
+  geom_point(alpha = 0.4) +
+  geom_smooth(method = "loess", span = 0.9, se = TRUE, alpha = 0.1) + # 呢度一定要有 + 號
+  labs(
+    title = "Marketing Spend vs. Purchase Revenue",
+    subtitle = "Analysis of Diminishing Returns across Customer Segments",
+    x = "Marketing Expenditure ($)",
+    y = "Total Purchase Amount ($)",
+    color = "Market Segment",
+    fill = "Market Segment",
+    caption = "Source: Campaign Performance Dataset 2024-2026"
+  ) +
+  theme_minimal()
+```
+
+The LOESS analysis in **\@fig-diminishing-returns** reveals distinct saturation thresholds across segments, addressing the research question on budget optimization:
+
+-   **SMB Segment**: This group demonstrates a strong initial response, exhibiting peak efficiency with a steep slope between **\$0–\$100**, suggesting a high Return on Investment (ROI) for early-stage spending. A temporary saturation point emerges around **\$150–\$200**, where the curve noticeably flattens, marking the threshold where diminishing returns settle in. Beyond \$200, the segment demonstrates a secondary growth phase, suggesting a **two-stage response curve** rather than a simple linear relationship. SMB investment should therefore be prioritised within the **\$0–\$150 high-efficiency window**.
+
+<!-- -->
+
+-   **Enterprise Segment**: This group demonstrates the most efficient initial response. The data shows that Enterprise clients in this dataset have a minimum observed marketing spend of approximately **\$60**, beyond which a steep and efficient growth trajectory is evident. However, a clear saturation point emerges at approximately **\$150**, beyond which the curve flattens and no longer outperforms other segments. Budget allocation for Enterprise clients should therefore be concentrated within the **\$60–\$150 active growth window** to maximise marginal returns.
+
+<!-- -->
+
+-   **Consumer Segment**: This segment is **relatively inelastic** to marketing expenditure and appears to be the least responsive to specific spending fluctuations. The curve remains relatively linear but flatter throughout the range, indicating a **stable but lower marginal utility** compared to the B2B segments. Due to this lack of significant marginal utility windows, resources could be more effectively **reallocated** to the optimised **SMB** and **Enterprise** windows to maximise total revenue.
+
+To maximise total revenue, priority should be given to **SMB investments up to \$150** and **Enterprise spending concentrated within the \$60–\$150 window** before diminishing returns occur

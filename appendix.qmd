@@ -23,18 +23,54 @@ execute:
   message: false
 ---
 
-### R code for data cleaning 
+### R code for data cleaning
 
-![](images/cleaning_code1.png)
+![R code for data cleaning 1](images/cleaning_code1.png)
 
-![](images/cleaning_code2.png)
+![R code for data cleaning 2](images/cleaning_code2.png)
 
-![](images/cleaning_code3.png)
+![R code for data cleaning 3](images/cleaning_code3.png)
 
-### Correct my tone and english writing in Dataset Introduction sectiongit code for pushing, and check whether my writing is alligned to my code
+### Correct my tone and english writing in Dataset Introduction section git code for pushing, and check whether my writing is alligned to my code
 
-![](images/correct_eng1.png)
+![English writing and logic checking 1](images/correct_eng1.png)
 
-![](images/correct_eng2.png)
+![English writing and logic checking 2](images/correct_eng2.png)
 
-![](images/correct_eng3.png)
+![English writing and logic checking 3](images/correct_eng3.png)
+
+### R code for data size
+
+![using AI to produce R code for data size](images/data_size_code.png)
+
+### Correct my tone and english writing in Dataset Introduction section 
+
+![Eng writing -Dataset Introduction section 1](images/clipboard-4106143212.png)
+
+![Eng writing -Dataset Introduction section 2](images/clipboard-3819006291.png)
+
+-----
+
+### R code for Dataset summaries (plot and table)
+
+![R code for Dataset summaries (plot and table) 1](images/clipboard-3108136730.png)
+
+-----
+
+#### Transform my ideas about the plot and table into a report writing style. 
+
+![Transform my ideas about the plot and table into a report writing style. 1](images/clipboard-146613331.png)
+
+![Transform my ideas about the plot and table into a report writing style. 2](images/clipboard-3815003983.png)
+
+------
+
+### R code for Result ( LOESS plot)
+
+![LOESS R CODE](images/clipboard-3562268367.png)
+
+#### Transform my ideas about the plot and table into a report writing style. 
+
+![Transform my ideas about the plot and table into a report writing style. 1](images/clipboard-2865604706.png)
+
+![Transform my ideas about the plot and table into a report writing style. 2](images/螢幕擷取畫面 2026-04-02 223545.png)
