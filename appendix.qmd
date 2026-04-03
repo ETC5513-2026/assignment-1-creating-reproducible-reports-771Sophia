@@ -74,3 +74,7 @@ execute:
 ![Transform my ideas about the plot and table into a report writing style. 1](images/clipboard-2865604706.png)
 
 ![Transform my ideas about the plot and table into a report writing style. 2](images/螢幕擷取畫面 2026-04-02 223545.png)
+
+### R code for analysing ROI data
+
+![](images/clipboard-4193233207.png)

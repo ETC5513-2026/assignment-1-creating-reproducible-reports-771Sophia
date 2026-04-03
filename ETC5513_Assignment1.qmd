@@ -347,6 +347,10 @@ roi_summary %>%
 
 ```
 
+The ROI summary in \@tbl-roi-summary provides a financial baseline for the subsequent non-linear analysis. Specifically, the high percentage of negative ROI (60.6% overall) highlights the critical need for budget optimization. This justifies the use of LOESS smoothing in \@fig-diminishing-returns to identify the precise spending windows where marginal returns shift from negative to positive.
+
+The ROI summary in **\@tbl-roi-summary** establishes a financial baseline for the campaign. The high prevalence of negative ROI (**60.6% overall**) highlights a critical need for budget optimization. This justifies the use of LOESS smoothing in **\@fig-diminishing-returns** to identify specific "efficiency windows" where marginal returns are maximized.
+
 ```{r}
 #| label: fig-diminishing-returns
 #| fig-cap: "Non-linear smoothing (LOESS) identifying potential points of diminishing marginal returns in marketing spend."
@@ -373,14 +377,12 @@ ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment, f
 
 The LOESS analysis in **\@fig-diminishing-returns** reveals distinct saturation thresholds across segments, addressing the research question on budget optimization:
 
+-   **Consumer Segment**: This segment is **relatively inelastic** to marketing expenditure and appears to be the least responsive to specific spending fluctuations. The curve remains relatively linear but flatter throughout the range, indicating a **stable but lower marginal utility** compared to the B2B segments. Due to this lack of significant marginal utility windows, resources could be more effectively **reallocated** to the optimised **SMB** and **Enterprise** windows to maximise total revenue.
+
 -   **SMB Segment**: This group demonstrates a strong initial response, exhibiting peak efficiency with a steep slope between **\$0–\$100**, suggesting a high Return on Investment (ROI) for early-stage spending. A temporary saturation point emerges around **\$150–\$200**, where the curve noticeably flattens, marking the threshold where diminishing returns settle in. Beyond \$200, the segment demonstrates a secondary growth phase, suggesting a **two-stage response curve** rather than a simple linear relationship. SMB investment should therefore be prioritised within the **\$0–\$150 high-efficiency window**.
 
 <!-- -->
 
 -   **Enterprise Segment**: This group demonstrates the most efficient initial response. The data shows that Enterprise clients in this dataset have a minimum observed marketing spend of approximately **\$60**, beyond which a steep and efficient growth trajectory is evident. However, a clear saturation point emerges at approximately **\$150**, beyond which the curve flattens and no longer outperforms other segments. Budget allocation for Enterprise clients should therefore be concentrated within the **\$60–\$150 active growth window** to maximise marginal returns.
-
-<!-- -->
-
--   **Consumer Segment**: This segment is **relatively inelastic** to marketing expenditure and appears to be the least responsive to specific spending fluctuations. The curve remains relatively linear but flatter throughout the range, indicating a **stable but lower marginal utility** compared to the B2B segments. Due to this lack of significant marginal utility windows, resources could be more effectively **reallocated** to the optimised **SMB** and **Enterprise** windows to maximise total revenue.
 
 To maximise total revenue, priority should be given to **SMB investments up to \$150** and **Enterprise spending concentrated within the \$60–\$150 window** before diminishing returns occur
