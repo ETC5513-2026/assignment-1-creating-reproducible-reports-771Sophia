@@ -21,9 +21,10 @@ execute:
 
 ```{r}
 #| label: quicklook
-#| include: false
 #| warning: false
 #| message: false
+#| results: "hide"
+
 
 library(tidyverse)
 raw <- read_csv("data/35851937_Sin Chan.csv")
@@ -36,19 +37,17 @@ names(raw)
 
 ## Introduction
 
-> In an increasingly competitive e-commerce landscape, quantifying the return on personalized marketing investments is essential for driving sustainable revenue growth. This research examines whether higher expenditure on advertisements, emails, and coupons during the previous quarter’s personalized campaign led to increased individual purchase amounts.\
-> \
-> By analyzing these relationships at the customer level, the study evaluates the effectiveness of variable marketing spend across different channels.\
+In an increasingly competitive e-commerce landscape, quantifying the return on personalized marketing investments is essential for driving sustainable revenue growth. This research examines whether higher expenditure on advertisements, emails, and coupons during the previous quarter’s personalized campaign led to increased individual purchase amounts. By analyzing these relationships at the customer level, the study evaluates the effectiveness of variable marketing spend across different channels.
 
 ## Research Question
 
-> The main goal of this report is to determine if increasing investment in a specific channel results in a linear increase in revenue or if data shows distinct points of diminishing return for each category. The study analyzes these relationships in order to provide actionable insights that can be used to optimize future marketing budgets for diverse communication channels.
+This analysis explores whether increased marketing investment per customer effectively drives higher purchase revenue. By evaluating the relationship between spending and performance across various channels, this report identifies whether current strategies yield linear growth or if specific segments have reached a point of diminishing returns.
 
 ## Dataset Introduction
 
 ```{r}
 #| label: data-cleansing
-#| include: false
+
 #| warning: false
 #| message: false
 
@@ -169,32 +168,62 @@ cleaned <- raw %>%
 
 # ── 4. VALIDATION CHECKS ────────────────────────────────────
 
-cat("\n── Cleaned data summary ──────────────────────────────\n")
-cat("Rows          :", nrow(cleaned), "\n")
-cat("Columns       :", ncol(cleaned), "\n\n")
+cat("\n", rep("=", 60), "\n")
+cat(" DATA QUALITY & PERFORMANCE METRICS SUMMARY \n")
+cat(rep("=", 60), "\n\n")
 
-cat("Missing values per column:\n")
-print(colSums(is.na(cleaned)))
+# 1. 數據基礎規模
+cat(sprintf("%-30s : %d\n", "Total Customer Records", nrow(cleaned)))
+cat(sprintf("%-30s : %d\n", "Total Analysis Variables", ncol(cleaned)))
+cat("\n")
 
-cat("\nSegment distribution:\n")
-print(table(cleaned$segment))
+# 2. Key Performance Metrics
+# Mean, Median and SD to show the distribution of the data
+metrics_summary <- cleaned %>%
+  summarise(
+    # Marketing Expenditure
+    mean_spend    = mean(marketing_spend, na.rm = TRUE),
+    median_spend  = median(marketing_spend, na.rm = TRUE),
+    
+    # Total Purchase Amounts
+    mean_purchase = mean(purchase_amount, na.rm = TRUE),
+    sd_purchase   = sd(purchase_amount, na.rm = TRUE),
+    
+    # Platform Visit Frequency
+    mean_visits   = mean(visits, na.rm = TRUE),
+    max_visits    = max(visits, na.rm = TRUE),
+    
+    # ROI
+    mean_roi      = mean(roi, na.rm = TRUE)
+  )
 
-cat("\nnotes distribution:\n")
-print(table(cleaned$notes, useNA = "ifany"))
+cat("Performance Metrics (Averages & Distribution):\n")
+cat(sprintf("  %-28s : $%.2f (Median: $%.2f)\n", "Avg Marketing Expenditure", metrics_summary$mean_spend, metrics_summary$median_spend))
+cat(sprintf("  %-28s : $%.2f (Std Dev: %.2f)\n", "Avg Purchase Amount", metrics_summary$mean_purchase, metrics_summary$sd_purchase))
+cat(sprintf("  %-28s : %.1f visits (Max: %d)\n", "Avg Visit Frequency", metrics_summary$mean_visits, metrics_summary$max_visits))
+cat(sprintf("  %-28s : %.1f%%\n", "Average ROI", metrics_summary$mean_roi * 100))
 
-cat("\nsignup_date range (non-missing):\n")
-cat("  Min:", format(min(cleaned$signup_date, na.rm = TRUE)), "\n")
-cat("  Max:", format(max(cleaned$signup_date, na.rm = TRUE)), "\n")
+# 3. 數據完整性檢查 (Missing Data)
+cat("\nData Integrity Check (Missing Values):\n")
+missing_counts <- colSums(is.na(cleaned))
+# List out all missing value
+significant_missing <- missing_counts[missing_counts > 0]
+if(length(significant_missing) > 0) {
+  for(i in seq_along(significant_missing)) {
+    cat(sprintf("  %-28s : %d rows missing\n", names(significant_missing)[i], significant_missing[i]))
+  }
+} else {
+  cat("  All key columns are 100% complete.\n")
+}
 
-cat("\npurchase_amount summary:\n")
-print(summary(cleaned$purchase_amount))
+# 4.Segment
+cat("\nMarket Segment Distribution:\n")
+seg_table <- table(cleaned$segment)
+for(n in names(seg_table)) {
+  cat(sprintf("  %-28s : %d customers\n", n, seg_table[n]))
+}
 
-cat("\nmarketing_spend summary:\n")
-print(summary(cleaned$marketing_spend))
-
-cat("\nROI summary:\n")
-print(summary(cleaned$roi))
-
+cat("\n", rep("=", 60), "\n")
 
 # ── 5. EXPORT ───────────────────────────────────────────────
 
@@ -204,25 +233,30 @@ write_csv(cleaned, "35851937_Sin_Chan_cleaned.csv", na = "")
 
 ### Data Cleaning
 
-> To ensure the dataset was ready for reproducible analysis, a cleaning procedure was performed. First, the `signup_date` column was standardized into a consistent ISO 8601 format to resolve various date string discrepancies. Second, inconsistent missing value indicators (such as 'N/A' or 'na') were unified into standard R `NA` values across all columns, particularly for `purchase_amount` and `notes`. Textual entries in the `notes` column were trimmed of extra whitespace and converted to lowercase to maintain string consistency. Finally, the `segment` variable was reclassified as an ordered factor to correctly represent the hierarchy of business tiers, ensuring that the statistical summaries reflect the intended business logic.
+To ensure the dataset was ready for reproducible analysis, a cleaning procedure was performed. First, the `signup_date` column was standardized into a consistent ISO 8601 format to resolve various date string discrepancies. Second, inconsistent missing value indicators (such as 'N/A' or 'na') were unified into standard R `NA` values across all columns, particularly for `purchase_amount`. This standardization was critical for the derivation of the Return on Investment (ROI) metric; by maintaining these 18 missing purchase records as `NA`, the subsequent analysis avoids skewed results that would occur if missing values were incorrectly treated as zero.
 
-### Data Description
+Textual entries in the `notes` column were trimmed of extra whitespace and converted to lowercase to maintain string consistency. Furthermore, the `segment` variable was reclassified as an ordered factor to correctly represent the hierarchy of business tiers (Consumer \< SMB \< Enterprise). This ensures that both the ROI summary statistics and the LOESS smoothing curves reflect the intended business logic while accounting for the inherent gaps in the transactional data.
 
-> This dataset records the engagement of `r nrow(cleaned)` customers across 3 market segments (Consumer, SMB, and Enterprise) from September 2024 to February 2026. The data measures key performance metrics including individual marketing expenditures, total purchase amounts, and platform visit frequency. The processed dataset consists of `r ncol(cleaned)` variables, ranging from numerical financial figures (e.g., `marketing_spend`, `roi`) to categorical classifications and logical flags used for tracking customer behavior.
->
-> The dataset includes the following 6 variable types:
->
-> -   **Numeric**: `marketing_spend`, `purchase_amount`, and `roi`.
->
-> -   **Integer**: `visits` and `days_since_signup`.
->
-> -   **Ordered Factor**: `segment` (Consumer \< SMB \< Enterprise).
->
-> -   **Date**: `signup_date`.
->
-> -   **Character**: `customer_id` and `notes`.
->
-> -   **Logical**: `contacted_flag`, `returned_flag`, `no_response_flag`, and `purchase_missing`
+### Dataset Introduction
+
+This dataset records customer engagement and marketing performance of `r nrow(cleaned)` customers across three market segments (Consumer, SMB, and Enterprise) from September 2024 to February 2026. The data measures key performance metrics including marketing expenditure, purchase amounts, visit frequency, and return on investment (ROI).\
+The processed dataset consists of `r ncol(cleaned)` variables, ranging from numerical financial figures to categorical classifications and logical flags used for tracking customer behavior. Some variables have missing values, particularly in signup-related fields and notes, which may affect data completeness and derived measures.
+
+The dataset includes the following 6 variable types:
+
+-   **Numeric**: `marketing_spend`, `purchase_amount`, and `roi`.
+
+-   **Integer**: `visits` and `days_since_signup`.
+
+-   **Ordered Factor**: `segment` (Consumer \< SMB \< Enterprise).
+
+-   **Date**: `signup_date`.
+
+-   **Character**: `customer_id` and `notes`.
+
+-   **Logical**: `contacted_flag`, `returned_flag`, `no_response_flag`, and `purchase_missing`
+
+## Dataset Introduction
 
 ```{r}
 #| label: fig-spend-vs-purchase
@@ -253,7 +287,6 @@ ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment)) 
 library(dplyr)
 library(knitr)
 
-# 建立按 segment 分組的統計表
 segment_summary <- cleaned |>
   group_by(segment) |>
   summarise(
@@ -264,9 +297,10 @@ segment_summary <- cleaned |>
   ) |>
   mutate(across(where(is.numeric), ~round(., 2)))
 
-# 在 kable 函數內直接加入 caption
 kable(segment_summary, 
       caption = "Table 1: Summary Statistics of Campaign Performance by Segment")
+
+
 ```
 
 As detailed in @tbl-segment-summary, the average marketing spend and purchase behavior vary across 3 segments, with the Enterprise segment showing the highest average marketing spend at \$174.73, while the Consumer segment contributed the vast majority of platform traffic with 511 total visits.\

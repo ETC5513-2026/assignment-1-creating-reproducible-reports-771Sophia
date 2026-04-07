@@ -23,6 +23,8 @@ execute:
   message: false
 ---
 
+<https://gemini.google.com/share/bd68c70c15e2>
+
 ### R code for data cleaning
 
 ![R code for data cleaning 1](images/cleaning_code1.png)
@@ -43,37 +45,37 @@ execute:
 
 ![using AI to produce R code for data size](images/data_size_code.png)
 
-### Correct my tone and english writing in Dataset Introduction section 
+### Correct my tone and english writing in Dataset Introduction section
 
 ![Eng writing -Dataset Introduction section 1](images/clipboard-4106143212.png)
 
 ![Eng writing -Dataset Introduction section 2](images/clipboard-3819006291.png)
 
------
+------------------------------------------------------------------------
 
 ### R code for Dataset summaries (plot and table)
 
 ![R code for Dataset summaries (plot and table) 1](images/clipboard-3108136730.png)
 
------
+------------------------------------------------------------------------
 
-#### Transform my ideas about the plot and table into a report writing style. 
+#### Transform my ideas about the plot and table into a report writing style.
 
 ![Transform my ideas about the plot and table into a report writing style. 1](images/clipboard-146613331.png)
 
 ![Transform my ideas about the plot and table into a report writing style. 2](images/clipboard-3815003983.png)
 
-------
+------------------------------------------------------------------------
 
 ### R code for Result ( LOESS plot)
 
 ![LOESS R CODE](images/clipboard-3562268367.png)
 
-#### Transform my ideas about the plot and table into a report writing style. 
+#### Transform my ideas about the plot and table into a report writing style.
 
 ![Transform my ideas about the plot and table into a report writing style. 1](images/clipboard-2865604706.png)
 
-![Transform my ideas about the plot and table into a report writing style. 2](images/螢幕擷取畫面 2026-04-02 223545.png)
+![Transform my ideas about the plot and table into a report writing style. 2](images/螢幕擷取畫面%202026-04-02%20223545.png)
 
 ### R code for analysing ROI data
 

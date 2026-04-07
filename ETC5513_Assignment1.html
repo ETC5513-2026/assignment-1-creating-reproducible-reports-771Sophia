@@ -2454,10 +2454,91 @@ By analyzing these relationships at the customer level, the study evaluates the 
 </section>
 <section id="dataset-introduction" class="level2">
 <h2 class="anchored" data-anchor-id="dataset-introduction">Dataset Introduction</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Raw data loaded: 150 rows x 7 cols</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+── Cleaned data summary ──────────────────────────────</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows          : 150 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Columns       : 13 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Missing values per column:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      customer_id       signup_date   marketing_spend            visits 
+                0                33                 0                 0 
+  purchase_amount           segment             notes days_since_signup 
+               18                 0               101                33 
+              roi    contacted_flag     returned_flag  no_response_flag 
+               18                 0                 0                 0 
+ purchase_missing 
+                0 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Segment distribution:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  Consumer        SMB Enterprise 
+        94         37         19 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+notes distribution:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  contacted no response    returned        &lt;NA&gt; 
+         28           6          15         101 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+signup_date range (non-missing):</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Min: 2024-09-19 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Max: 2026-02-02 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+purchase_amount summary:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+   0.00   80.53  139.85  138.31  180.79  313.57      18 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+marketing_spend summary:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   2.19   84.79  152.84  151.38  213.56  298.41 </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ROI summary:</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA&#39;s 
+-1.00000 -0.33370 -0.06875  0.12651  0.24982 10.14920       18 </code></pre>
+</div>
+</div>
 <section id="data-cleaning" class="level3">
 <h3 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h3>
 <blockquote class="blockquote">
-<p>To ensure the dataset was ready for reproducible analysis, a cleaning procedure was performed. First, the <code>signup_date</code> column was standardized into a consistent ISO 8601 format to resolve various date string discrepancies. Second, inconsistent missing value indicators (such as ‘N/A’ or ‘na’) were unified into standard R <code>NA</code> values across all columns, particularly for <code>purchase_amount</code> and <code>notes</code>. Textual entries in the <code>notes</code> column were trimmed of extra whitespace and converted to lowercase to maintain string consistency. Finally, the <code>segment</code> variable was reclassified as an ordered factor to correctly represent the hierarchy of business tiers, ensuring that the statistical summaries reflect the intended business logic.</p>
+<p>To ensure the dataset was ready for reproducible analysis, a cleaning procedure was performed. First, the <code>signup_date</code> column was standardized into a consistent ISO 8601 format to resolve various date string discrepancies. Second, inconsistent missing value indicators (such as ‘N/A’ or ‘na’) were unified into standard R <code>NA</code> values across all columns, particularly for <code>purchase_amount</code>. This standardization was critical for the derivation of the Return on Investment (ROI) metric; by maintaining these 18 missing purchase records as <code>NA</code>, the subsequent analysis avoids skewed results that would occur if missing values were incorrectly treated as zero.</p>
+<p>Textual entries in the <code>notes</code> column were trimmed of extra whitespace and converted to lowercase to maintain string consistency. Furthermore, the <code>segment</code> variable was reclassified as an ordered factor to correctly represent the hierarchy of business tiers (Consumer &lt; SMB &lt; Enterprise). This ensures that both the ROI summary statistics and the LOESS smoothing curves reflect the intended business logic while accounting for the inherent gaps in the transactional data.</p>
 </blockquote>
 </section>
 <section id="data-description" class="level3">
@@ -2608,6 +2689,8 @@ Furthermore, <a href="#fig-spend-vs-purchase" class="quarto-xref">Figure 1</a> 
 </table>
 </div>
 </div>
+<p>The ROI summary in @tbl-roi-summary provides a financial baseline for the subsequent non-linear analysis. Specifically, the high percentage of negative ROI (60.6% overall) highlights the critical need for budget optimization. This justifies the use of LOESS smoothing in @fig-diminishing-returns to identify the precise spending windows where marginal returns shift from negative to positive.</p>
+<p>The ROI summary in <strong>@tbl-roi-summary</strong> establishes a financial baseline for the campaign. The high prevalence of negative ROI (<strong>60.6% overall</strong>) highlights a critical need for budget optimization. This justifies the use of LOESS smoothing in <strong>@fig-diminishing-returns</strong> to identify specific “efficiency windows” where marginal returns are maximized.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-diminishing-returns" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -2624,15 +2707,12 @@ Figure 2: Non-linear smoothing (LOESS) identifying potential points of diminish
 </div>
 <p>The LOESS analysis in <strong>@fig-diminishing-returns</strong> reveals distinct saturation thresholds across segments, addressing the research question on budget optimization:</p>
 <ul>
-<li><strong>SMB Segment</strong>: This group demonstrates a strong initial response, exhibiting peak efficiency with a steep slope between <strong>$0–$100</strong>, suggesting a high Return on Investment (ROI) for early-stage spending. A temporary saturation point emerges around <strong>$150–$200</strong>, where the curve noticeably flattens, marking the threshold where diminishing returns settle in. Beyond $200, the segment demonstrates a secondary growth phase, suggesting a <strong>two-stage response curve</strong> rather than a simple linear relationship. SMB investment should therefore be prioritised within the <strong>$0–$150 high-efficiency window</strong>.</li>
+<li><p><strong>Consumer Segment</strong>: This segment is <strong>relatively inelastic</strong> to marketing expenditure and appears to be the least responsive to specific spending fluctuations. The curve remains relatively linear but flatter throughout the range, indicating a <strong>stable but lower marginal utility</strong> compared to the B2B segments. Due to this lack of significant marginal utility windows, resources could be more effectively <strong>reallocated</strong> to the optimised <strong>SMB</strong> and <strong>Enterprise</strong> windows to maximise total revenue.</p></li>
+<li><p><strong>SMB Segment</strong>: This group demonstrates a strong initial response, exhibiting peak efficiency with a steep slope between <strong>$0–$100</strong>, suggesting a high Return on Investment (ROI) for early-stage spending. A temporary saturation point emerges around <strong>$150–$200</strong>, where the curve noticeably flattens, marking the threshold where diminishing returns settle in. Beyond $200, the segment demonstrates a secondary growth phase, suggesting a <strong>two-stage response curve</strong> rather than a simple linear relationship. SMB investment should therefore be prioritised within the <strong>$0–$150 high-efficiency window</strong>.</p></li>
 </ul>
 <!-- -->
 <ul>
 <li><strong>Enterprise Segment</strong>: This group demonstrates the most efficient initial response. The data shows that Enterprise clients in this dataset have a minimum observed marketing spend of approximately <strong>$60</strong>, beyond which a steep and efficient growth trajectory is evident. However, a clear saturation point emerges at approximately <strong>$150</strong>, beyond which the curve flattens and no longer outperforms other segments. Budget allocation for Enterprise clients should therefore be concentrated within the <strong>$60–$150 active growth window</strong> to maximise marginal returns.</li>
-</ul>
-<!-- -->
-<ul>
-<li><strong>Consumer Segment</strong>: This segment is <strong>relatively inelastic</strong> to marketing expenditure and appears to be the least responsive to specific spending fluctuations. The curve remains relatively linear but flatter throughout the range, indicating a <strong>stable but lower marginal utility</strong> compared to the B2B segments. Due to this lack of significant marginal utility windows, resources could be more effectively <strong>reallocated</strong> to the optimised <strong>SMB</strong> and <strong>Enterprise</strong> windows to maximise total revenue.</li>
 </ul>
 <p>To maximise total revenue, priority should be given to <strong>SMB investments up to $150</strong> and <strong>Enterprise spending concentrated within the $60–$150 window</strong> before diminishing returns occur</p>
 </section>
