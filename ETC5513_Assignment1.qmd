@@ -24,7 +24,7 @@ In an increasingly competitive e-commerce landscape, quantifying the return on p
 
 ## [Research Question]{.underline}
 
-This analysis explores wh ether increased marketing investment per customer effectively drives higher purchase revenue. By evaluating the relationship between spending and performance across various channels, this report identifies whether current strategies yield linear growth or if specific segments have reached a point of diminishing returns.
+This analysis explores whether increased marketing investment per customer effectively drives higher purchase revenue. By evaluating the relationship between spending and performance across various channels, this report identifies whether current strategies yield linear growth or if specific segments have reached a point of diminishing returns.
 
 ## [Dataset Introduction]{.underline}
 
@@ -241,7 +241,7 @@ library(skimr)
 skim(cleaned)
 ```
 
-The processed dataset consists of **`r nrow(cleaned)`** observations and **`r ncol(cleaned)`** variables, ranging from numerical financial figures to categorical classifications and logical flags used for tracking customer behavior. Notably, some variables have missing values, particularly in signup_date and notes, which may affect data completeness and the reliability of derived measures.
+The processed dataset consists of `r nrow(cleaned)` observations and `r ncol(cleaned)` variables, ranging from numerical financial figures to categorical classifications and logical flags used for tracking customer behavior. Notably, some variables have missing values, particularly in signup_date and notes, which may affect data completeness and the reliability of derived measures.
 
 ### Variable Classifications
 
@@ -263,7 +263,7 @@ The dataset captures customer behavior through six distinct data types:
 
 The sample is predominantly composed of the Consumer segment (n=94), followed by SMB (n=37) and Enterprise (n=19) tiers. While the dataset is comprehensive, 12% of the observations (n=18) lack purchase and ROI data. These records are explicitly flagged as missing to ensure that subsequent non-linear modeling remains robust and transparent.
 
-### Preliminary Descriptive Analysis
+### Preliminary Descriptive Analysis 
 
 ```{r}
 #| label: fig-spend-vs-purchase
@@ -292,7 +292,6 @@ ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment)) 
 #| echo: false
 #| message: false
 
-library(dplyr)
 library(knitr)
 
 segment_summary <- cleaned |>
@@ -311,32 +310,27 @@ kable(segment_summary,
 
 ```
 
+\
 As detailed in @tbl-segment-summary, the average marketing spend and purchase behavior vary across 3 segments, with the Enterprise segment showing the highest average marketing spend at \$174.73, while the Consumer segment contributed the vast majority of platform traffic with 511 total visits.\
 
 Furthermore, @fig-spend-vs-purchase illustrates the linear relationship between spending and revenue, a deeper look at the ROI reveals a more complex financial reality. Although the mean ROI is 12.7%, the typical (median) ROI is slightly negative at -7%. This highly skewed distribution suggests that a small number of high-performing accounts offset a larger group of underperforming customers who have yet to reach a break-even threshold.
 
-------------------------------------------------------------------------
+## [Results]{.underline}
 
-## Results
-
-As detailed in **\@tbl-roi-summary**, the marketing campaign faces significant efficiency challenges. While the overall mean ROI stands at **12.7%**, this figure is heavily skewed; the median ROI is negative (**-6.9%**), and **60.6%** of all customer interactions result in a negative return. This high prevalence of loss justifies the use of non-linear LOESS smoothing in **\@fig-loess-trend** to identify the specific "efficiency windows" where marginal returns are actually maximized.
+As detailed in @tbl-roi-summary, the marketing campaign faces significant efficiency challenges. While the overall mean ROI stands at 12.7%, this figure is heavily skewed; the median ROI is negative (-6.9%), and 60.6% of all customer interactions result in a negative return. This high prevalence of loss justifies the use of non-linear LOESS smoothing in @fig-loess-trend to identify the specific "efficiency windows" where marginal returns are actually maximized.
 
 ```{r}
-# ── PACKAGES ────────────────────────────────────────────────
-library(dplyr)
-library(ggplot2)
-library(knitr)
-library(kableExtra)
-library(scales)
-
-# ══════════════════════════════════════════════════════════════
-# ROI SUMMARY TABLE (existing)
-# ══════════════════════════════════════════════════════════════
-
 #| label: tbl-roi-summary
+#| tbl-cap: "ROI Summary Statistics by Market Segment"
 #| echo: false
 #| warning: false
 #| message: false
+
+
+library(ggplot2)
+
+library(kableExtra)
+library(scales)
 
 roi_table <- cleaned %>%
   filter(!is.na(roi)) %>%
@@ -373,7 +367,6 @@ roi_summary <- bind_rows(roi_table, total_row)
 
 roi_summary %>%
   kable(
-    caption  = "ROI Summary Statistics by Segment",
     align    = c("l", rep("c", ncol(roi_summary) - 1)),
     booktabs = TRUE
   ) %>%
@@ -399,8 +392,6 @@ roi_summary %>%
 #| message: false
 #| warning: false
 
-library(ggplot2)
-
 ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment, fill = segment)) +
   geom_point(alpha = 0.4) +
   geom_smooth(method = "loess", span = 0.9, se = TRUE, alpha = 0.1) + 
@@ -418,13 +409,13 @@ ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment, f
 
 ```
 
-The LOESS analysis in **\@fig-loess-trend** reveals that revenue growth is not proportional to expenditure. Instead, distinct saturation thresholds appear across the three segments:
+The LOESS analysis in @fig-loess-trend reveals that revenue growth is not proportional to expenditure. Instead, distinct saturation thresholds appear across the three segments:
 
--   **Consumer Segment:** This segment is the most "inelastic." The purple curve is flatter than the others, indicating a stable but lower marginal response to increased spending. While **\@tbl-roi-check** shows a massive **85.0% ROI** at low spend levels (\$0–\$100), efficiency decreases as spend increases. Because this segment lacks a strong growth trajectory, resources are likely better spent in the more responsive SMB and Enterprise windows.
+-   **Consumer Segment:** This segment is the most inelastic to marketing expenditure. The purple curve is flatter than the others, indicating a stable but lower marginal response to increased spending. While @tbl-roi-check shows a massive 85.0% ROI at low spend levels (\$0–\$100), efficiency decreases as spend increases. Because this segment lacks a strong growth trajectory, resources are likely better spent in the more responsive SMB and Ent
 
--   **SMB Segment:** This group shows a classic "growth then plateau" pattern. Efficiency peaks early (steeper slope) with a **35.8% ROI** in the \$0–\$100 bracket. However, as spending reaches the **\$150–\$200** range, the curve flattens significantly. Per **\@tbl-roi-check**, ROI for SMBs in the high-spend bracket (\>\$200) drops to **-17.7%**, explaining why 50% of this segment remains unprofitable.
+-   **SMB Segment:** The SMB segment follows a classic pattern of diminishing marginal returns, where efficiency peaks early (steeper slope) with a 35.8% ROI in the \$0–\$100 bracket. However, as spending reaches the \$150–\$200 range, the curve flattens significantly. Per @tbl-roi-check , ROI for SMBs in the high-spend bracket (\>\$200) drops to -17.7%, explaining why 50% of this segment remains unprofitable.
 
--   **Enterprise Segment:** This segment exhibits a unique "activation" threshold. Data suggests a minimum spend of approximately **\$60** is required to trigger a steep growth trajectory. Between **\$60 and \$150**, Enterprise shows its highest marginal utility. However, a clear saturation point emerges at **\$150**, beyond which the curve flattens and returns turn negative (**-23.2%** for spend \>\$200).
+-   **Enterprise Segment:** The Enterprise segment demonstrates a distinct minimum expenditure threshold, where growth only begins to accelerate once spending reaches approximately \$60. Between \$60 and \$150, Enterprise shows its highest marginal utility. However, a clear saturation point emerges at \$150, beyond which the curve flattens and returns turn negative (-23.2% for spend \>\$200).
 
 ```{r}
 #| label: tbl-roi-check
@@ -460,12 +451,12 @@ roi_check_all %>%
 
 ```
 
-The granular data in **\@tbl-roi-check** confirms that for all three segments, spending over **\$200** leads to guaranteed negative returns (ranging from **-17.7% to -23.2%**). To maximize total revenue and move the campaign toward profitability, the following budget adjustments are recommended:
+The granular data in @tbl-roi-check confirms that for all three segments, spending over \$200 leads to guaranteed negative returns (ranging from -17.7% to -23.2%). To maximize total revenue and move the campaign toward profitability, the following budget adjustments are recommended:
 
--   **Prioritize SMB Mid-Range:** Focus SMB investments within the **\$0–\$150** window where returns are still positive.
+-   **Prioritize SMB Mid-Range:** Focus SMB investments within the \$0–\$150 window where returns are still positive.
 
--   **Optimize the Enterprise Window:** Target Enterprise spending strictly within the **\$60–\$150** growth window to avoid the high entry losses and high-spend saturation.
+-   **Optimize the Enterprise Window:** Target Enterprise spending strictly within the \$60–\$150 growth window to avoid the high entry losses and high-spend saturation.
 
--   **Implement Spending Caps:** Across all segments, a hard cap of **\$200** per customer should be enforced, as expenditure beyond this point consistently erodes total campaign profit.
+-   **Implement Spending Caps:** Across all segments, a hard cap of \$200 per customer should be enforced, as expenditure beyond this point consistently erodes total campaign profit.
 
 ------

@@ -2448,7 +2448,7 @@ border: 0;
 </section>
 <section id="research-question" class="level2">
 <h2 class="anchored" data-anchor-id="research-question"><u>Research Question</u></h2>
-<p>This analysis explores wh ether increased marketing investment per customer effectively drives higher purchase revenue. By evaluating the relationship between spending and performance across various channels, this report identifies whether current strategies yield linear growth or if specific segments have reached a point of diminishing returns.</p>
+<p>This analysis explores whether increased marketing investment per customer effectively drives higher purchase revenue. By evaluating the relationship between spending and performance across various channels, this report identifies whether current strategies yield linear growth or if specific segments have reached a point of diminishing returns.</p>
 </section>
 <section id="dataset-introduction" class="level2">
 <h2 class="anchored" data-anchor-id="dataset-introduction"><u>Dataset Introduction</u></h2>
@@ -2462,7 +2462,7 @@ border: 0;
 </section>
 <section id="dataset-description" class="level2">
 <h2 class="anchored" data-anchor-id="dataset-description"><u>Dataset Description</u></h2>
-<p>The processed dataset consists of <strong>150</strong> observations and <strong>13</strong> variables, ranging from numerical financial figures to categorical classifications and logical flags used for tracking customer behavior. Notably, some variables have missing values, particularly in signup_date and notes, which may affect data completeness and the reliability of derived measures.</p>
+<p>The processed dataset consists of 150 observations and 13 variables, ranging from numerical financial figures to categorical classifications and logical flags used for tracking customer behavior. Notably, some variables have missing values, particularly in signup_date and notes, which may affect data completeness and the reliability of derived measures.</p>
 <section id="variable-classifications" class="level3">
 <h3 class="anchored" data-anchor-id="variable-classifications">Variable Classifications</h3>
 <p>The dataset captures customer behavior through six distinct data types:</p>
@@ -2542,7 +2542,8 @@ Table 1: Summary Statistics of Campaign Performance by Segment
 </figure>
 </div>
 </div>
-<p>As detailed in <a href="#tbl-segment-summary" class="quarto-xref">Table 1</a>, the average marketing spend and purchase behavior vary across 3 segments, with the Enterprise segment showing the highest average marketing spend at $174.73, while the Consumer segment contributed the vast majority of platform traffic with 511 total visits.<br>
+<p><br>
+As detailed in <a href="#tbl-segment-summary" class="quarto-xref">Table 1</a>, the average marketing spend and purchase behavior vary across 3 segments, with the Enterprise segment showing the highest average marketing spend at $174.73, while the Consumer segment contributed the vast majority of platform traffic with 511 total visits.<br>
 </p>
 <p>Furthermore, <a href="#fig-spend-vs-purchase" class="quarto-xref">Figure 1</a> illustrates the linear relationship between spending and revenue, a deeper look at the ROI reveals a more complex financial reality. Although the mean ROI is 12.7%, the typical (median) ROI is slightly negative at -7%. This highly skewed distribution suggests that a small number of high-performing accounts offset a larger group of underperforming customers who have yet to reach a break-even threshold.</p>
 <hr>
@@ -2550,10 +2551,16 @@ Table 1: Summary Statistics of Campaign Performance by Segment
 </section>
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
+<p>As detailed in <a href="#tbl-roi-summary" class="quarto-xref">Table 2</a>, the marketing campaign faces significant efficiency challenges. While the overall mean ROI stands at 12.7%, this figure is heavily skewed; the median ROI is negative (-6.9%), and 60.6% of all customer interactions result in a negative return. This high prevalence of loss justifies the use of non-linear LOESS smoothing in <a href="#fig-loess-trend" class="quarto-xref">Figure 2</a> to identify the specific “efficiency windows” where marginal returns are actually maximized.</p>
 <div class="cell">
+<div id="tbl-roi-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-roi-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 2: ROI Summary Statistics by Market Segment
+</figcaption>
+<div aria-describedby="tbl-roi-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<table class="table table-striped table-hover table-condensed caption-top table-sm small">
-<caption>ROI Summary Statistics by Segment</caption>
+<table class="table table-striped table-hover table-condensed do-not-create-environment cell caption-top table-sm small">
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">segment</th>
@@ -2616,7 +2623,9 @@ Table 1: Summary Statistics of Campaign Performance by Segment
 </table>
 </div>
 </div>
-<p>The ROI summary in @tbl-roi-summary establishes a financial baseline for the campaign. The high prevalence of negative ROI (60.6% overall) highlights a critical need for budget optimization. This justifies the use of LOESS smoothing in @fig-diminishing-returns to identify specific “efficiency windows” where marginal returns are maximized.</p>
+</figure>
+</div>
+</div>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-loess-trend" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -2631,27 +2640,92 @@ Figure 2: Non-linear smoothing (LOESS) identifying potential points of diminish
 </div>
 </div>
 </div>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 3 × 3
-  spend_bracket  avg_roi sample_size
-  &lt;fct&gt;            &lt;dbl&gt;       &lt;int&gt;
-1 Low ($0-100)    0.358           13
-2 Mid ($100-200) -0.0358          14
-3 High ($200+)   -0.177           10</code></pre>
-</div>
-</div>
-<p>The LOESS analysis in <a href="#fig-loess-trend" class="quarto-xref">Figure 2</a> reveals distinct saturation thresholds across 3 segments, addressing the research question on budget optim</p>
+<p>The LOESS analysis in <a href="#fig-loess-trend" class="quarto-xref">Figure 2</a> reveals that revenue growth is not proportional to expenditure. Instead, distinct saturation thresholds appear across the three segments:</p>
 <ul>
-<li><p><strong>Consumer Segment</strong>: This segment is relatively inelastic to marketing expenditure and appears to be the least responsive to specific spending fluctuations. The curve remains relatively linear but flatter throughout the range, indicating a stable but lower marginal utility compared to the SMB and Enterprise segments. Due to this lack of significant marginal utility windows, resources could be more effectively reallocated to the optimised SMB and Enterprise windows to maximise total revenue.</p></li>
-<li><p><strong>SMB Segment</strong>: This group demonstrates a strong initial response, exhibiting peak efficiency with a steep slope between $0–$100, suggesting a high Return on Investment (ROI) for early-stage spending. A temporary saturation point emerges around $150–$200, where the curve noticeably flattens, marking the threshold where diminishing returns settle in. Beyond $200, the segment demonstrates a secondary growth phase, suggesting a two-stage response curve rather than a simple linear relationship. SMB investment should therefore be prioritised within the $0–$150 high-efficiency window.</p></li>
-<li><p><strong>Enterprise Segment</strong>: This group demonstrates the most efficient initial response. The data shows that Enterprise clients in this dataset have a minimum observed marketing spend of approximately <strong>$60</strong>, beyond which a steep and efficient growth trajectory is evident. However, a clear saturation point emerges at approximately <strong>$150</strong>, beyond which the curve flattens and no longer outperforms other segments. Budget allocation for Enterprise clients should therefore be concentrated within the <strong>$60–$150 active growth window</strong> to maximise marginal returns.</p></li>
+<li><p><strong>Consumer Segment:</strong> This segment is the most inelastic to marketing expenditure. The purple curve is flatter than the others, indicating a stable but lower marginal response to increased spending. While <a href="#tbl-roi-check" class="quarto-xref">Table 3</a> shows a massive 85.0% ROI at low spend levels ($0–$100), efficiency decreases as spend increases. Because this segment lacks a strong growth trajectory, resources are likely better spent in the more responsive SMB and Ent</p></li>
+<li><p><strong>SMB Segment:</strong> The SMB segment follows a classic pattern of diminishing marginal returns, where efficiency peaks early (steeper slope) with a 35.8% ROI in the $0–$100 bracket. However, as spending reaches the $150–$200 range, the curve flattens significantly. Per <a href="#tbl-roi-check" class="quarto-xref">Table 3</a> , ROI for SMBs in the high-spend bracket (&gt;$200) drops to -17.7%, explaining why 50% of this segment remains unprofitable.</p></li>
+<li><p><strong>Enterprise Segment:</strong> The Enterprise segment demonstrates a distinct minimum expenditure threshold, where growth only begins to accelerate once spending reaches approximately $60. Between $60 and $150, Enterprise shows its highest marginal utility. However, a clear saturation point emerges at $150, beyond which the curve flattens and returns turn negative (-23.2% for spend &gt;$200).</p></li>
 </ul>
-<p>To maximise total revenue, priority should be given to <strong>SMB investments up to $150</strong> and <strong>Enterprise spending concentrated within the $60–$150 window</strong> before diminishing returns occur</p>
+<div class="cell">
+<div id="tbl-roi-check" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-roi-check-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 3: Detailed ROI Analysis by Segment and Spend Bracket
+</figcaption>
+<div aria-describedby="tbl-roi-check-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="table table-condensed table-striped table-hover do-not-create-environment cell caption-top table-sm small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Segment</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Spend Bracket</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Avg ROI (%)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Sample Size (n)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td rowspan="3" style="text-align: left; vertical-align: top !important;">Consumer</td>
+<td style="text-align: left;">Low ($0-100)</td>
+<td style="text-align: center;">85.0%</td>
+<td style="text-align: center;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mid ($100-200)</td>
+<td style="text-align: center;">1.8%</td>
+<td style="text-align: center;">32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">High ($200+)</td>
+<td style="text-align: center;">-22.3%</td>
+<td style="text-align: center;">28</td>
+</tr>
+<tr class="even">
+<td rowspan="3" style="text-align: left; vertical-align: top !important;">SMB</td>
+<td style="text-align: left;">Low ($0-100)</td>
+<td style="text-align: center;">35.8%</td>
+<td style="text-align: center;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mid ($100-200)</td>
+<td style="text-align: center;">-3.6%</td>
+<td style="text-align: center;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">High ($200+)</td>
+<td style="text-align: center;">-17.7%</td>
+<td style="text-align: center;">8</td>
+</tr>
+<tr class="odd">
+<td rowspan="3" style="text-align: left; vertical-align: top !important;">Enterprise</td>
+<td style="text-align: left;">Low ($0-100)</td>
+<td style="text-align: center;">-47.8%</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mid ($100-200)</td>
+<td style="text-align: center;">10.3%</td>
+<td style="text-align: center;">9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">High ($200+)</td>
+<td style="text-align: center;">-23.2%</td>
+<td style="text-align: center;">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The granular data in <a href="#tbl-roi-check" class="quarto-xref">Table 3</a> confirms that for all three segments, spending over $200 leads to guaranteed negative returns (ranging from -17.7% to -23.2%). To maximize total revenue and move the campaign toward profitability, the following budget adjustments are recommended:</p>
+<ul>
+<li><p><strong>Prioritize SMB Mid-Range:</strong> Focus SMB investments within the $0–$150 window where returns are still positive.</p></li>
+<li><p><strong>Optimize the Enterprise Window:</strong> Target Enterprise spending strictly within the $60–$150 growth window to avoid the high entry losses and high-spend saturation.</p></li>
+<li><p><strong>Implement Spending Caps:</strong> Across all segments, a hard cap of $200 per customer should be enforced, as expenditure beyond this point consistently erodes total campaign profit.</p></li>
+</ul>
 <hr>
-<p>The relationship between marketing expenditure and revenue is examined through both aggregate performance metrics ( <strong>?@tbl-roi-summary</strong>) and non-linear trend analysis ( <a href="#fig-loess-trend" class="quarto-xref">Figure 2</a> ).</p>
-<p>As shown in <strong>?@tbl-roi-summary</strong>, the SMB segment maintains a modest overall Mean ROI of <strong>8.4%</strong>. However, the LOESS curve in <a href="#fig-loess-trend" class="quarto-xref">Figure 2</a> reveals that this efficiency is not uniform. While low-level spending drives growth, the slope flattens significantly at higher expenditure levels.</p>
-<p>Further granular analysis indicates that for SMB segment, the ROI for investments exceeding $200 drops to <strong>-17.7%</strong>, contrasting sharply with the <strong>35.8%</strong> ROI seen in the $0-$100 bracket. This explains why <strong>50% of the SMB segment</strong> remains in a negative ROI state (as noted in @tbl-roi-summary), despite the positive mean. These findings suggest that the Enterprise segment’s even lower Mean ROI (<strong>-8.4%</strong>) and high negative frequency (<strong>76.5%</strong>) make it the least efficient tier for aggressive marketing expansion.</p>
 </section>
 
 </main>
