@@ -277,8 +277,6 @@ ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment)) 
   geom_point(alpha = 0.6) +
   geom_smooth(method = "lm", se = FALSE) +
   labs(
-    title = "Figure 1: Marketing Spend vs Purchase Amount by Segment",
-    subtitle = "Analysis of correlation across different business tiers",
     x = "Marketing Spend ($)",
     y = "Purchase Amount ($)",
     color = "Segment"
@@ -396,8 +394,6 @@ ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment, f
   geom_point(alpha = 0.4) +
   geom_smooth(method = "loess", span = 0.9, se = TRUE, alpha = 0.1) + 
   labs(
-    title = "Marketing Spend vs. Purchase Revenue",
-    subtitle = "Analysis of Diminishing Returns across Customer Segments",
     x = "Marketing Expenditure ($)",
     y = "Total Purchase Amount ($)",
     color = "Market Segment",
