@@ -8,7 +8,8 @@ format:
     toc: true
     embed-resources: true 
   pdf:
-    documentclass: article
+    documentclass: scrartcl
+    geometry: margin=0.8in
     toc: true
     number-sections: true
     colorlinks: true
@@ -215,6 +216,8 @@ write_csv(cleaned, "data/35851937_Sin_Chan_cleaned.csv", na = "")
 
 ```
 
+### Data Overview
+
 This dataset records customer engagement and marketing performance of `r nrow(cleaned)` customers across 3 market segments (Consumer, SMB, and Enterprise) from September 2024 to February 2026. The data measures key performance metrics including marketing expenditure, purchase amounts, visit frequency, and return on investment (ROI).
 
 By analyzing these variables, the report aims to evaluate the effectiveness of personalized marketing spend and identify optimal investment windows for future campaign cycles.
@@ -365,23 +368,69 @@ total_row <- cleaned %>%
 
 roi_summary <- bind_rows(roi_table, total_row)
 
-roi_summary %>%
-  kable(
-    align    = c("l", rep("c", ncol(roi_summary) - 1)),
-    booktabs = TRUE
+roi_summary <- cleaned %>%
+  filter(!is.na(roi)) %>%
+  group_by(segment) %>%
+  summarise(
+    Customers          = n(),
+    `Mean ROI (%)`     = paste0(round(mean(roi) * 100, 1), "%"),
+    `Median ROI (%)`   = paste0(round(median(roi) * 100, 1), "%"),
+    `Positive ROI (n)` = sum(roi > 0),
+    `Negative ROI (n)` = sum(roi < 0),
+    `% Negative ROI`   = paste0(round(mean(roi < 0) * 100, 1), "%"),
+    `Mean Spend ($)`   = paste0("$", round(mean(marketing_spend), 2)),
+    `Mean Purchase ($)`= paste0("$", round(mean(purchase_amount, na.rm = TRUE), 2)),
+    .groups = "drop"
   ) %>%
-  kable_styling(
-    bootstrap_options = c("striped", "hover", "condensed"),
-    full_width        = FALSE,
-    position          = "left"
-  ) %>%
-  column_spec(1, bold = TRUE) %>%
-  column_spec(6, bold = TRUE,
-              color = ifelse(
-                as.numeric(gsub("%", "", roi_summary$`% Negative ROI`)) > 60,
-                "red", "black"
-              )) %>%
-  row_spec(nrow(roi_summary), bold = TRUE, background = "#f5f5f5")
+  bind_rows(
+    cleaned %>%
+      filter(!is.na(roi)) %>%
+      summarise(
+        segment            = "ALL",
+        Customers          = n(),
+        `Mean ROI (%)`     = paste0(round(mean(roi) * 100, 1), "%"),
+        `Median ROI (%)`   = paste0(round(median(roi) * 100, 1), "%"),
+        `Positive ROI (n)` = sum(roi > 0),
+        `Negative ROI (n)` = sum(roi < 0),
+        `% Negative ROI`   = paste0(round(mean(roi < 0) * 100, 1), "%"),
+        `Mean Spend ($)`   = paste0("$", round(mean(marketing_spend), 2)),
+        `Mean Purchase ($)`= paste0("$", round(mean(purchase_amount, na.rm = TRUE), 2))
+      )
+  )
+
+# 2. 判斷輸出格式並渲染
+if (knitr::is_latex_output()) {
+  # --- PDF 輸出設定 ---
+  roi_summary %>%
+    kable(
+      format = "latex",
+      booktabs = TRUE,
+      align = c("l", rep("c", ncol(roi_summary) - 1))
+    ) %>%
+    kable_styling(
+      latex_options = c("scale_down", "hold_position"),
+      font_size = 8
+    ) %>%
+    column_spec(1, bold = TRUE) %>%
+    row_spec(nrow(roi_summary), bold = TRUE, background = "#F2F2F2")
+} else {
+  # --- HTML 輸出設定 ---
+  roi_summary %>%
+    kable(
+      format = "html",
+      align = c("l", rep("c", ncol(roi_summary) - 1))
+    ) %>%
+    kable_styling(
+      bootstrap_options = c("striped", "hover", "condensed"),
+      full_width = FALSE
+    ) %>%
+    column_spec(1, bold = TRUE) %>%
+    row_spec(nrow(roi_summary), bold = TRUE) %>%
+    scroll_box(width = "100%") # 預防 HTML 爆邊
+}
+
+
+
 
 ```
 
@@ -447,12 +496,13 @@ roi_check_all %>%
                             full_width = FALSE) %>%
   kableExtra::collapse_rows(columns = 1, valign = "top") # Merges segment names for clarity
 
+
 ```
 
 The granular data in @tbl-roi-check confirms that for all three segments, spending over \$200 leads to guaranteed negative returns (ranging from -17.7% to -23.2%). To maximize total revenue and move the campaign toward profitability, the following budget adjustments are recommended:
 
--   **Prioritize SMB Mid-Range:** Focus SMB investments within the \$0–\$150 window where returns are still positive.
+-   **Exploit the Efficiency Zone (\$0–\$100):** For the Consumer and SMB segments, marketing expenditure below \$100 yields the highest returns, with average ROIs of 85.0% and 35.8%, respectively. Management should focus on increasing the volume of customers within this low-spend bracket, as it represents the most cost-effective growth opportunity.
 
--   **Optimize the Enterprise Window:** Target Enterprise spending strictly within the \$60–\$150 growth window to avoid the high entry losses and high-spend saturation.
+-   **Target the Enterprise "Growth Window" (\$60–\$150):** The Enterprise segment requires a minimum "entry spend" to trigger returns; investments below \$60 result in heavy losses (-47.8% ROI). Spending should be strictly targeted within the \$60–\$150 window to capture the positive ROI (10.3%) seen in the mid-spend bracket before saturation begins.
 
--   **Implement Spending Caps:** Across all segments, a hard cap of \$200 per customer should be enforced, as expenditure beyond this point consistently erodes total campaign profit.
+-   **Enforce Universal Spending Caps (\$200):** Across all segments, a hard cap of \$200 per customer should be implemented. Expenditure beyond this point consistently erodes total campaign profit, indicating that these customers are over-saturated and no longer responsive to additional marketing pressure.

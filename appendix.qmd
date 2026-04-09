@@ -4,13 +4,15 @@ author: "Sinping CHAN"
 format:
   html:
     theme: cosmo       
-    toc: true
-    embed-resources: true 
+    toc: false
+    embed-resources: true
+    number-sections: false
   pdf:
-    documentclass: article
-    toc: true
-    number-sections: true
+    documentclass: scrartcl
+    geometry: margin=0.8in
+    toc: false
     colorlinks: true
+    number-sections: false
 ---
 
 I acknowledge the use of \[1\] Gemini 3 Flash \[2\] ([https://gemini.google.com/](https://gemini.google.com/?authuser=3)) and \[1\] Claude Sonnet 4.6 \[2\] (<https://claude.ai/)> to \[3\] generate ideas, structure suggestions, draft initial outlines and rewrite text, and provide code enhancements that were \[3\] included within my final assessment in modified form. I entered the following prompts on 9 April 2026:
