@@ -13,15 +13,11 @@ format:
     colorlinks: true
 ---
 
-### **Appendix: Acknowledgement of Generative AI Use**
-
 I acknowledge the use of \[1\] Gemini 3 Flash \[2\] ([https://gemini.google.com/](https://gemini.google.com/?authuser=3)) and \[1\] Claude Sonnet 4.6 \[2\] (<https://claude.ai/)> to \[3\] generate ideas, structure suggestions, draft initial outlines and rewrite text, and provide code enhancements that were \[3\] included within my final assessment in modified form. I entered the following prompts on 9 April 2026:
 
 -   \[3\] Structure the "Dataset Introduction" and "Dataset Description" sections to ensure a professional distinction between business context and technical data details. \[4\] I edited the drafts to ensure the specific dates (Sept 2024 – Feb 2026) and customer segments accurately reflected my dataset.
 
 -   \[3\] Refine the academic style, English phrasing, and professional terminology throughout the assignment, including the Introduction, Dataset Description, and Results sections, ensuring a "highly skewed distribution" was correctly explained. \[4\] I reviewed and modified the suggested text to ensure it accurately reflected my specific findings and maintained a consistent voice.
-
--   
 
 -   \[3\] Develop code for data visualizations (Figures), specifically the LOESS smoothing plot, and provide advice on professional academic formatting such as removing internal titles and using Quarto cross-referencing. \[4\] I confirmed that the visualization parameters accurately represented the trends and distributions found in my data.
 
@@ -37,17 +33,13 @@ I acknowledge the use of \[1\] Gemini 3 Flash \[2\] ([https://gemini.google.com/
 
     3.  **Part 3:** Full conversation logs and specific prompt iterations with Claude can be found at the following link: \[[HERE](https://claude.ai/share/3ae2791b-32fe-4d30-b1ab-ea2fac8d1a6d)\]
 
-#### [**Documentation of AI Interactions: Part 1**]{.underline}
+### [**Screenshots of Initial Gemini Interactions:**]{.underline}
 
 #### R code for data cleaning
 
 ![R code for data cleaning 1](images/cleaning_code1.png)
 
-![R code for data cleaning 2](images/cleaning_code2.png)
-
-![R code for data cleaning 3](images/cleaning_code3.png)
-
-### Correct my tone and english writing in Dataset Introduction section git code for pushing, and check whether my writing is aligned to my code
+#### Correct my tone and english writing in Dataset Introduction section git code for pushing, and check whether my writing is aligned to my code
 
 ![English writing and logic checking 1](images/correct_eng1.png)
 
@@ -55,42 +47,38 @@ I acknowledge the use of \[1\] Gemini 3 Flash \[2\] ([https://gemini.google.com/
 
 ![English writing and logic checking 3](images/correct_eng3.png)
 
-### R code for data size
+#### R code for data size
 
 ![using AI to produce R code for data size](images/data_size_code.png)
 
-### Correct my tone and English writing in Dataset Introduction section
+#### Correct my tone and English writing in Dataset Introduction section
 
-![Eng writing -Dataset Introduction section 1](images/clipboard-4106143212.png)
+![Eng writing -Dataset Introduction section 1](images/correct_eng4.png)
 
-![Eng writing -Dataset Introduction section 2](images/clipboard-3819006291.png)
+![Eng writing -Dataset Introduction section 2](images/correct_eng5.png)
 
 ------------------------------------------------------------------------
 
-### R code for Dataset summaries (plot and table)
+#### R code for Dataset summaries (plot and table)
 
-![R code for Dataset summaries (plot and table) 1](images/clipboard-3108136730.png)
+![R code for Dataset summaries (plot and table) 1](images/Rcode_Dataset_summaries1.png)
 
 ------------------------------------------------------------------------
 
 #### Transform my ideas about the plot and table into a report writing style.
 
-![Transform my ideas about the plot and table into a report writing style. 1](images/clipboard-146613331.png)
+![Transform my ideas about the plot and table into a report writing style. 1](images/correct_eng6.png)
 
-![Transform my ideas about the plot and table into a report writing style. 2](images/clipboard-3815003983.png)
+![Transform my ideas about the plot and table into a report writing style. 2](images/correct_eng7.png)
 
 ------------------------------------------------------------------------
 
-### R code for Result ( LOESS plot)
+#### R code for Result ( LOESS plot)
 
-![LOESS R CODE](images/clipboard-3562268367.png)
+![LOESS R CODE](images/Rcode_LOESS.png)
 
 #### Transform my ideas about the plot and table into a report writing style.
 
-![Transform my ideas about the plot and table into a report writing style. 1](images/clipboard-2865604706.png)
+![Transform my ideas about the plot and table into a report writing style. 1](images/correct_eng8.png)
 
-![Transform my ideas about the plot and table into a report writing style. 2](images/螢幕擷取畫面%202026-04-02%20223545.png)
-
-### R code for analysing ROI data
-
-![](images/clipboard-4193233207.png)
+![Transform my ideas about the plot and table into a report writing style. 2](images/correct_eng9.png)
