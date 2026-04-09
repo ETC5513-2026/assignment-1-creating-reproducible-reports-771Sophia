@@ -29,7 +29,7 @@ I acknowledge the use of \[1\] Gemini 3 Flash \[2\] ([https://gemini.google.com/
 
     1.  **Part 1:** Key interactions regarding data cleaning and initial visualization with Gemini are provided as screenshots in the following pages of this appendix.
 
-    2.  **Part 2:** Subsequent full conversation logs with Gemini are documented in the separate file: "Gemini_chat.docx" .
+    2.  **Part 2:** Subsequent full conversation logs with Gemini are documented in the separate file: [Gemini_chat.docx](appendix_materials/Gemini_chat.docx)
 
     3.  **Part 3:** Full conversation logs and specific prompt iterations with Claude can be found at the following link: \[[HERE](https://claude.ai/share/3ae2791b-32fe-4d30-b1ab-ea2fac8d1a6d)\]
 
