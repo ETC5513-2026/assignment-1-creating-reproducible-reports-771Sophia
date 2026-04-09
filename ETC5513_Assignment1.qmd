@@ -263,27 +263,7 @@ The dataset captures customer behavior through six distinct data types:
 
 The sample is predominantly composed of the Consumer segment (n=94), followed by SMB (n=37) and Enterprise (n=19) tiers. While the dataset is comprehensive, 12% of the observations (n=18) lack purchase and ROI data. These records are explicitly flagged as missing to ensure that subsequent non-linear modeling remains robust and transparent.
 
-### Preliminary Descriptive Analysis 
-
-```{r}
-#| label: fig-spend-vs-purchase
-#| fig-cap: "Marketing Spend vs Purchase Amount by Segment"
-#| echo: false
-#| warning: false
-
-library(ggplot2)
-
-ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment)) +
-  geom_point(alpha = 0.6) +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(
-    x = "Marketing Spend ($)",
-    y = "Purchase Amount ($)",
-    color = "Segment"
-  ) +
-  theme_minimal()
-
-```
+### Preliminary Descriptive Analysis
 
 ```{r}
 #| label: tbl-segment-summary
@@ -308,14 +288,36 @@ kable(segment_summary,
 
 ```
 
+```{r}
+#| label: fig-spend-vs-purchase
+#| fig-cap: "Marketing Spend vs Purchase Amount by Segment"
+#| echo: false
+#| warning: false
+
+library(ggplot2)
+
+ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    x = "Marketing Spend ($)",
+    y = "Purchase Amount ($)",
+    color = "Segment"
+  ) +
+  theme_minimal()
+
+```
+
 \
-As detailed in @tbl-segment-summary, the average marketing spend and purchase behavior vary across 3 segments, with the Enterprise segment showing the highest average marketing spend at \$174.73, while the Consumer segment contributed the vast majority of platform traffic with 511 total visits.\
+As detailed in @tbl-segment-summary, the average marketing spend and purchase behavior vary across the three segments, with the Enterprise segment showing the highest average marketing spend at \$174.73, while the Consumer segment contributed the vast majority of platform traffic with 511 total visits.\
 
 Furthermore, @fig-spend-vs-purchase illustrates the linear relationship between spending and revenue, a deeper look at the ROI reveals a more complex financial reality. Although the mean ROI is 12.7%, the typical (median) ROI is slightly negative at -7%. This highly skewed distribution suggests that a small number of high-performing accounts offset a larger group of underperforming customers who have yet to reach a break-even threshold.
 
 ## [Results]{.underline}
 
-As detailed in @tbl-roi-summary, the marketing campaign faces significant efficiency challenges. While the overall mean ROI stands at 12.7%, this figure is heavily skewed; the median ROI is negative (-6.9%), and 60.6% of all customer interactions result in a negative return. This high prevalence of loss justifies the use of non-linear LOESS smoothing in @fig-loess-trend to identify the specific "efficiency windows" where marginal returns are actually maximized.
+The relationship between marketing expenditure and revenue is examined through both aggregate performance metrics (@tbl-roi-summary) and non-linear trend analysis (@fig-loess-trend).
+
+As detailed in @tbl-roi-summary, the marketing campaign faces significant efficiency challenges. While the overall mean ROI stands at 12.7%, this figure is heavily skewed. The median ROI is negative (-6.9%), and 60.6% of all customer interactions have a negative ROI. This high prevalence of loss justifies the use of non-linear LOESS smoothing in @fig-loess-trend to identify the specific "efficiency windows" that maximize marginal returns.
 
 ```{r}
 #| label: tbl-roi-summary
@@ -407,9 +409,9 @@ ggplot(cleaned, aes(x = marketing_spend, y = purchase_amount, color = segment, f
 
 The LOESS analysis in @fig-loess-trend reveals that revenue growth is not proportional to expenditure. Instead, distinct saturation thresholds appear across the three segments:
 
--   **Consumer Segment:** This segment is the most inelastic to marketing expenditure. The purple curve is flatter than the others, indicating a stable but lower marginal response to increased spending. While @tbl-roi-check shows a massive 85.0% ROI at low spend levels (\$0–\$100), efficiency decreases as spend increases. Because this segment lacks a strong growth trajectory, resources are likely better spent in the more responsive SMB and Ent
+-   **Consumer Segment:** This segment is the most inelastic to marketing expenditure. The purple curve is flatter than the others, indicating a stable but lower marginal response to increased spending. While @tbl-roi-check shows a massive 85.0% ROI at low spend levels (\$0–\$100), efficiency decreases as spend increases. Because this segment lacks a strong growth trajectory, resources are likely better spent in the more responsive SMB and Enterprise segments.
 
--   **SMB Segment:** The SMB segment follows a classic pattern of diminishing marginal returns, where efficiency peaks early (steeper slope) with a 35.8% ROI in the \$0–\$100 bracket. However, as spending reaches the \$150–\$200 range, the curve flattens significantly. Per @tbl-roi-check , ROI for SMBs in the high-spend bracket (\>\$200) drops to -17.7%, explaining why 50% of this segment remains unprofitable.
+-   **SMB Segment:** The SMB segment follows a classic pattern of diminishing marginal returns, where efficiency peaks early (steeper slope) with a 35.8% ROI in the \$0–\$100 bracket. However, as spending reaches the \$150–\$200 range, the curve flattens significantly. According to @tbl-roi-check , ROI for SMBs in the high-spend bracket (\>\$200) drops to -17.7%. This explains why 50% of this segment remains unprofitable.
 
 -   **Enterprise Segment:** The Enterprise segment demonstrates a distinct minimum expenditure threshold, where growth only begins to accelerate once spending reaches approximately \$60. Between \$60 and \$150, Enterprise shows its highest marginal utility. However, a clear saturation point emerges at \$150, beyond which the curve flattens and returns turn negative (-23.2% for spend \>\$200).
 
@@ -454,5 +456,3 @@ The granular data in @tbl-roi-check confirms that for all three segments, spendi
 -   **Optimize the Enterprise Window:** Target Enterprise spending strictly within the \$60–\$150 growth window to avoid the high entry losses and high-spend saturation.
 
 -   **Implement Spending Caps:** Across all segments, a hard cap of \$200 per customer should be enforced, as expenditure beyond this point consistently erodes total campaign profit.
-
-------

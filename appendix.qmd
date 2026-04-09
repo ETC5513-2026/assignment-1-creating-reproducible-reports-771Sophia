@@ -1,31 +1,45 @@
 ---
-title: "appendix"
+title: "Appendix: Acknowledgement of Generative AI Use"
 author: "Sinping CHAN"
-format: html
-editor: visual
-
-
 format:
   html:
     theme: cosmo       
     toc: true
-    code-fold: true      # Allows readers to toggle code visibility
     embed-resources: true 
   pdf:
     documentclass: article
     toc: true
     number-sections: true
     colorlinks: true
-
-execute:
-  echo: false         
-  warning: false
-  message: false
 ---
 
-<https://gemini.google.com/share/bd68c70c15e2>
+### **Appendix: Acknowledgement of Generative AI Use**
 
-### R code for data cleaning
+I acknowledge the use of \[1\] Gemini 3 Flash \[2\] ([https://gemini.google.com/](https://gemini.google.com/?authuser=3)) and \[1\] Claude Sonnet 4.6 \[2\] (<https://claude.ai/)> to \[3\] generate ideas, structure suggestions, draft initial outlines and rewrite text, and provide code enhancements that were \[3\] included within my final assessment in modified form. I entered the following prompts on 9 April 2026:
+
+-   \[3\] Structure the "Dataset Introduction" and "Dataset Description" sections to ensure a professional distinction between business context and technical data details. \[4\] I edited the drafts to ensure the specific dates (Sept 2024 – Feb 2026) and customer segments accurately reflected my dataset.
+
+-   \[3\] Refine the academic style, English phrasing, and professional terminology throughout the assignment, including the Introduction, Dataset Description, and Results sections, ensuring a "highly skewed distribution" was correctly explained. \[4\] I reviewed and modified the suggested text to ensure it accurately reflected my specific findings and maintained a consistent voice.
+
+-   
+
+-   \[3\] Develop code for data visualizations (Figures), specifically the LOESS smoothing plot, and provide advice on professional academic formatting such as removing internal titles and using Quarto cross-referencing. \[4\] I confirmed that the visualization parameters accurately represented the trends and distributions found in my data.
+
+-   \[3\] Generate R code and formatting for all tables, including the primary "ROI Summary Table" with conditional formatting (red text for negative ROI) and the granular "ROI Check" mini-table. \[4\] I cross-checked the outputted summary statistics against the raw data to ensure accuracy.
+
+-   \[3\] Troubleshoot technical issues regarding Quarto rendering (resolving "object not found" errors), cross-referencing, and Git connectivity within RStudio.
+
+-   **\[3\] Documentation of AI Interactions:** Due to technical limitations in the chat platform, the full log of my interactions is documented in three parts within the supplementary files:
+
+    1.  **Part 1:** Key interactions regarding data cleaning and initial visualization with Gemini are provided as screenshots in the following pages of this appendix.
+
+    2.  **Part 2:** Subsequent full conversation logs with Gemini are documented in the separate file: "Gemini_chat.docx" .
+
+    3.  **Part 3:** Full conversation logs and specific prompt iterations with Claude can be found at the following link: \[[HERE](https://claude.ai/share/3ae2791b-32fe-4d30-b1ab-ea2fac8d1a6d)\]
+
+#### [**Documentation of AI Interactions: Part 1**]{.underline}
+
+#### R code for data cleaning
 
 ![R code for data cleaning 1](images/cleaning_code1.png)
 
@@ -33,7 +47,7 @@ execute:
 
 ![R code for data cleaning 3](images/cleaning_code3.png)
 
-### Correct my tone and english writing in Dataset Introduction section git code for pushing, and check whether my writing is alligned to my code
+### Correct my tone and english writing in Dataset Introduction section git code for pushing, and check whether my writing is aligned to my code
 
 ![English writing and logic checking 1](images/correct_eng1.png)
 
@@ -45,7 +59,7 @@ execute:
 
 ![using AI to produce R code for data size](images/data_size_code.png)
 
-### Correct my tone and english writing in Dataset Introduction section
+### Correct my tone and English writing in Dataset Introduction section
 
 ![Eng writing -Dataset Introduction section 1](images/clipboard-4106143212.png)
 
